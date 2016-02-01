@@ -8,7 +8,6 @@
             margin: 0;
             padding: 0;
             background-color: #FFFFFF;
-
         }
 
         .textHolder{
@@ -18,8 +17,8 @@
     <script type="text/javascript" src="pixi.js"></script>
 </head>
 <body>
-<script type="text/javascript">
 
+<script type="text/javascript">
     // create an new instance of a pixi stage
     var stage = new PIXI.Stage(0x66FF99, true);
 
@@ -34,45 +33,23 @@
     renderer.view.style.left = "0px";
     requestAnimFrame( animate );
 
-    // create a texture from an image path
-    var texture = PIXI.Texture.fromImage("./pic/frontWheel.png");
-    // create a new Sprite using the texture
-    var bunny = new PIXI.Sprite(texture);
-    createBunny(bunny, window.innerWidth*0.6,window.innerHeight*0.5);
+    // change angles
+    var nTotalAngles = 3;
+    setCurrentAngle(0);
+    createAngle(getCurrentAngle());
 
-    // create a texture from an image path
-    var texture2 = PIXI.Texture.fromImage("./pic/handlebar.png");
-    // create a new Sprite using the texture
-    var bunny2 = new PIXI.Sprite(texture2);
-    createBunny(bunny2, window.innerWidth*0.6,window.innerHeight*0.2);
+    // create arrow button to change angles
+    var texture_leftArrow = PIXI.Texture.fromImage("./pic/left_arrow.png");
+    var leftArrow = new PIXI.Sprite(texture_leftArrow);
+    createArrow(leftArrow, window.innerWidth * 0.5, window.innerHeight * 0.5, true, false);
+    var texture_rightArrow = PIXI.Texture.fromImage("./pic/left_arrow.png");
+    var rightArrow = new PIXI.Sprite(texture_rightArrow);
+    createArrow(rightArrow, window.innerWidth * 0.6, window.innerHeight * 0.5, true, true);
 
-    // create a texture from an image path
-    var texture3 = PIXI.Texture.fromImage("./pic/chain.png");
-    // create a new Sprite using the texture
-    var bunny3 = new PIXI.Sprite(texture3);
-    createBunny(bunny3, window.innerWidth*0.38,window.innerHeight*0.55);
+    var whiteList = []; // which can not be cleaned up
+    whiteList.push(leftArrow);
+    whiteList.push(rightArrow);
 
-    // create a texture from an image path
-    var texture4 = PIXI.Texture.fromImage("./pic/back_wheel.png");
-    // create a new Sprite using the texture
-    var bunny4 = new PIXI.Sprite(texture4);
-    createBunny(bunny4, window.innerWidth*0.18,window.innerHeight*0.5);
-
-    // create a texture from an image path
-    var texture5 = PIXI.Texture.fromImage("./pic/frame.png");
-    // create a new Sprite using the texture
-    var bunny5 = new PIXI.Sprite(texture5);
-    createBunny(bunny5, window.innerWidth*0.38,window.innerHeight*0.3);
-
-
-    // create a texture from an image path
-    var texture6 = PIXI.Texture.fromImage("./pic/seat.png");
-    // create a new Sprite using the texture
-    var bunny6 = new PIXI.Sprite(texture6);
-    createBunny(bunny6, window.innerWidth*0.2,window.innerHeight*0.2);
-
-    // 替换 replace elements
-    replaceChild(bunny, bunny2);
 
     function createBunny(bunny,x, y)
     {
@@ -89,11 +66,8 @@
         bunny.anchor.x = 0.5;
         bunny.anchor.y = 0.5;
         // make it a bit bigger, so its easier to touch
-        bunny.scale.x = bunny.scale.y = 0.6;
-
-        // 自适应
+        bunny.scale.x = bunny.scale.y = 0.5;
         //bunny.height = window.innerHeight * 0.2;
-        //bunny.width = window.innerWidth * 0.1;
 
         // use the mousedown and touchstart
         bunny.mousedown = bunny.touchstart = function(data)
@@ -142,6 +116,173 @@
         stage.addChild(newChild);
         stage.swapChildren(oldChild, newChild);
         stage.removeChild(oldChild);
+    }
+
+    /* *
+     * 创建翻页箭头
+     * 向左还是向右由isLeftArrow标明, needReverse表明是否翻转
+     * */
+    function createArrow(arrow, x, y, isLeftArrow,needReverse)
+    {
+        arrow.interactive = true;
+        arrow.buttonMode = true;
+        arrow.anchor.x = 0.5;
+        arrow.anchor.y = 0.5;
+        arrow.scale.x = arrow.scale.y = 1;
+        if(needReverse == true)
+            arrow.rotation =  Math.PI;
+
+        // use the mousedown and touchstart
+        arrow.mousedown = arrow.touchstart = function(data)
+        {
+            //		data.originalEvent.preventDefault()
+            // store a refference to the data
+            // The reason for this is because of multitouch
+            // we want to track the movement of this particular touch
+            this.data = data;
+            this.alpha = 0.9;
+            //this.dragging = true;
+        };
+
+        // set the events for when the mouse is released or a touch is released
+        arrow.mouseup = arrow.mouseupoutside = arrow.touchend = arrow.touchendoutside = function(data)
+        {
+            this.alpha = 1;
+            //this.dragging = false;
+            // set the interaction data to null
+            this.data = null;
+
+            // 切换角度（向左或向右）
+            if((isLeftArrow == true && needReverse ==false)||
+                    (isLeftArrow == false && needReverse == true))
+                changeAngle_Left();
+            else
+                changeAngle_Right();
+        };
+
+        arrow.position.x = x;
+        arrow.position.y = y;
+
+        stage.addChild(arrow);
+    }
+
+    function createAngle_0()
+    {
+        // create a texture from an image path
+        var texture2 = PIXI.Texture.fromImage("./pic/handlebar.png");
+        // create a new Sprite using the texture
+        var bunny2 = new PIXI.Sprite(texture2);
+        createBunny(bunny2, window.innerWidth * 0.6, window.innerHeight * 0.2);
+
+        // create a texture from an image path
+        var texture3 = PIXI.Texture.fromImage("./pic/chain.png");
+        // create a new Sprite using the texture
+        var bunny3 = new PIXI.Sprite(texture3);
+        createBunny(bunny3, window.innerWidth*0.38,window.innerHeight*0.55);
+    }
+
+    function createAngle_1()
+    {
+        // create a texture from an image path
+        var texture4 = PIXI.Texture.fromImage("./pic/back_wheel.png");
+        // create a new Sprite using the texture
+        var bunny4 = new PIXI.Sprite(texture4);
+        createBunny(bunny4, window.innerWidth*0.18,window.innerHeight*0.5);
+
+        // create a texture from an image path
+        var texture5 = PIXI.Texture.fromImage("./pic/frame.png");
+        // create a new Sprite using the texture
+        var bunny5 = new PIXI.Sprite(texture5);
+        createBunny(bunny5, window.innerWidth*0.38,window.innerHeight*0.3);
+    }
+
+    function createAngle_2()
+    {
+        // create a texture from an image path
+        var texture6 = PIXI.Texture.fromImage("./pic/seat.png");
+        // create a new Sprite using the texture
+        var bunny6 = new PIXI.Sprite(texture6);
+        createBunny(bunny6, window.innerWidth*0.2,window.innerHeight*0.2);
+    }
+
+    function changeAngle_Left()
+    {
+        cleanAllChildren(whiteList);
+        var angle = getCurrentAngle()-1;
+        if(angle <0)
+        {
+            angle = nTotalAngles - 1;
+        }
+        setCurrentAngle(angle);
+
+        createAngle(angle);
+    }
+
+    function changeAngle_Right()
+    {
+        cleanAllChildren(whiteList);
+        var angle = getCurrentAngle()+1;
+        if(angle >= nTotalAngles)
+        {
+            angle = angle - nTotalAngles;
+        }
+        setCurrentAngle(angle);
+
+        createAngle(angle);
+    }
+
+    function createAngle(angle)
+    {
+        switch(angle)
+        {
+            case 0:
+                createAngle_0();
+                break;
+            case 1:
+                createAngle_1();
+                break;
+            case 2:
+                createAngle_2();
+                break;
+        }
+    }
+
+    function setCurrentAngle(num)
+    {
+        currentAngle = num;
+    }
+
+    function getCurrentAngle(){
+        if (currentAngle < 0 || currentAngle >= nTotalAngles)
+        {
+            throw new Error('Angle must be in correct scale');
+        }
+        return currentAngle;
+    }
+
+    // 清除画布（除白名单外）
+    function cleanAllChildren(whiteList)
+    {
+        var i,k = 0;
+        var len = whiteList.length;
+        var isNeedClean = true;
+        for(i = 0; i<stage.children.length; i++)
+        {
+            isNeedClean = true;
+            for(k = 0; k < len; k++)
+            {
+                if(i == stage.getChildIndex(whiteList[k]))
+                {
+                    isNeedClean = false;
+                    break;
+                }
+            }
+            if(isNeedClean == true)
+            {
+                stage.removeChild(stage.getChildAt(i));
+                i--;
+            }
+        }
     }
 
     function animate() {

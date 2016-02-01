@@ -1485,6 +1485,42 @@
         }
     }
 
+
+    /**
+     * Returns the index position of a child DisplayObject instance
+     *
+     * @method getChildIndex
+     * @param child {DisplayObject} The DisplayObject instance to identify
+     * @return {Number} The index position of the child display object to identify
+     */
+    PIXI.DisplayObjectContainer.prototype.getChildIndex = function(child)
+    {
+        var index = this.children.indexOf(child);
+        if (index === -1)
+        {
+            throw new Error('The supplied DisplayObject must be a child of the caller');
+        }
+        return index;
+    };
+
+    /**
+     * Changes the position of an existing child in the display object container
+     *
+     * @method setChildIndex
+     * @param child {DisplayObject} The child DisplayObject instance for which you want to change the index number
+     * @param index {Number} The resulting index number for the child display object
+     */
+    PIXI.DisplayObjectContainer.prototype.setChildIndex = function(child, index)
+    {
+        if (index < 0 || index >= this.children.length)
+        {
+            throw new Error('The supplied index is out of bounds');
+        }
+        var currentIndex = this.getChildIndex(child);
+        this.children.splice(currentIndex, 1); //remove from old position
+        this.children.splice(index, 0, child); //add at new position
+    };
+
     /**
      * Returns the Child at the specified index
      *
@@ -1683,7 +1719,7 @@
             return this.scale.x * this.texture.frame.width;
         },
         set: function(value) {
-            this.scale.x = value / this.texture.frame.width
+            this.scale.x = value / this.texture.frame.width;
             this._width = value;
         }
     });
@@ -1699,7 +1735,7 @@
             return  this.scale.y * this.texture.frame.height;
         },
         set: function(value) {
-            this.scale.y = value / this.texture.frame.height
+            this.scale.y = value / this.texture.frame.height;
             this._height = value;
         }
     });
