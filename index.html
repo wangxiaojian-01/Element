@@ -33,10 +33,15 @@
     renderer.view.style.left = "0px";
     requestAnimFrame( animate );
 
+    // change handle
+    bChangeHandle = false;
+
     // change angles
     var nTotalAngles = 3;
     setCurrentAngle(0);
     createAngle(getCurrentAngle());
+
+
 
     // create arrow button to change angles
     var texture_leftArrow = PIXI.Texture.fromImage("./pic/left_arrow.png");
@@ -46,9 +51,15 @@
     var rightArrow = new PIXI.Sprite(texture_rightArrow);
     createArrow(rightArrow, window.innerWidth * 0.6, window.innerHeight * 0.5, true, true);
 
+    var texturre_changeHandlebar = PIXI.Texture.fromImage("./pic/changeHandlebar.png");
+    var changeHandlebar = new PIXI.Sprite(texturre_changeHandlebar);
+    createChangeButton(changeHandlebar,window.innerWidth * 0.7, window.innerHeight * 0.2);
+
     var whiteList = []; // which can not be cleaned up
     whiteList.push(leftArrow);
     whiteList.push(rightArrow);
+    whiteList.push(changeHandlebar);
+
 
 
     function createBunny(bunny,x, y)
@@ -166,10 +177,54 @@
         stage.addChild(arrow);
     }
 
+    function createChangeButton(changeButton,x,y)
+    {
+        changeButton.interactive = true;
+        changeButton.buttonMode = true;
+        changeButton.anchor.x = 0.5;
+        changeButton.anchor.y = 0.5;
+        changeButton.scale.x = changeButton.scale.y = 0.3;
+
+        // use the mousedown and touchstart
+        changeButton.mousedown = changeButton.touchstart = function(data)
+        {
+            this.data = data;
+            this.alpha = 0.9;
+            //this.dragging = true;
+        };
+
+        // set the events for when the mouse is released or a touch is released
+        changeButton.mouseup = changeButton.mouseupoutside = changeButton.touchend = changeButton.touchendoutside = function(data)
+        {
+            this.alpha = 1;
+            //this.dragging = false;
+            // set the interaction data to null
+            this.data = null;
+
+            // change element
+            if(bChangeHandle == false)
+                bChangeHandle = true;
+            else
+                bChangeHandle = false;
+            cleanAllChildren(whiteList);
+            createAngle(getCurrentAngle());
+        };
+
+        changeButton.position.x = x;
+        changeButton.position.y = y;
+
+        stage.addChild(changeButton);
+    }
+
     function createAngle_0()
     {
         // create a texture from an image path
-        var texture2 = PIXI.Texture.fromImage("./pic/handlebar.png");
+        var handle_path = "";
+        if(bChangeHandle == false)
+            handle_path = "./pic/handlebar.png";
+        else
+            handle_path = "./pic/handlebar_2.png";
+        var texture2 = PIXI.Texture.fromImage(handle_path);
         // create a new Sprite using the texture
         var bunny2 = new PIXI.Sprite(texture2);
         createBunny(bunny2, window.innerWidth * 0.6, window.innerHeight * 0.2);
@@ -183,6 +238,17 @@
 
     function createAngle_1()
     {
+        // create a texture from an image path
+        var handle_path = "";
+        if(bChangeHandle == false)
+            handle_path = "./pic/handlebar.png";
+        else
+            handle_path = "./pic/handlebar_2.png";
+        var texture2 = PIXI.Texture.fromImage(handle_path);
+        // create a new Sprite using the texture
+        var bunny2 = new PIXI.Sprite(texture2);
+        createBunny(bunny2, window.innerWidth * 0.6, window.innerHeight * 0.2);
+
         // create a texture from an image path
         var texture4 = PIXI.Texture.fromImage("./pic/back_wheel.png");
         // create a new Sprite using the texture
@@ -198,6 +264,18 @@
 
     function createAngle_2()
     {
+
+        // create a texture from an image path
+        var handle_path = "";
+        if(bChangeHandle == false)
+            handle_path = "./pic/handlebar.png";
+        else
+            handle_path = "./pic/handlebar_2.png";
+        var texture2 = PIXI.Texture.fromImage(handle_path);
+        // create a new Sprite using the texture
+        var bunny2 = new PIXI.Sprite(texture2);
+        createBunny(bunny2, window.innerWidth * 0.6, window.innerHeight * 0.2);
+
         // create a texture from an image path
         var texture6 = PIXI.Texture.fromImage("./pic/seat.png");
         // create a new Sprite using the texture
