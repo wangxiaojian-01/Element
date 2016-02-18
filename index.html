@@ -33,14 +33,13 @@
     renderer.view.style.left = "0px";
     requestAnimFrame( animate );
 
-    // change handle
-    bChangeHandle = false;
+    // change gas box
+    bChangeGasbox = false;
 
     // change angles
-    var nTotalAngles = 3;
-    setCurrentAngle(0);
+    var nTotalAngles = 48;
+    setCurrentAngle(1);
     createAngle(getCurrentAngle());
-
 
 
     // create arrow button to change angles
@@ -61,6 +60,93 @@
     whiteList.push(changeHandlebar);
 
 
+    function createMotorBike(motorbike, x, y)
+    {
+        // enable the bunny to be interactive.. this will allow it to respond to mouse and touch events
+        motorbike.interactive = true;
+        // this button mode will mean the hand cursor appears when you rollover the bunny with your mouse
+        motorbike.buttonMode = true;
+
+        // center the bunnys anchor point
+        motorbike.anchor.x = 0.5;
+        motorbike.anchor.y = 0.5;
+        // make it a bit bigger, so its easier to touch
+        motorbike.scale.x = motorbike.scale.y = 0.5;
+        //bunny.height = window.innerHeight * 0.2;
+
+        // use the mousedown and touchstart
+        motorbike.mousedown = motorbike.touchstart = function(data)
+        {
+            this.data = data;
+            this.alpha = 0.9;
+            this.dragging = true;
+        };
+
+        // set the events for when the mouse is released or a touch is released
+        motorbike.mouseup = motorbike.mouseupoutside = motorbike.touchend = motorbike.touchendoutside = function(data)
+        {
+            this.alpha = 1;
+            this.dragging = false;
+            // set the interaction data to null
+            this.data = null;
+        };
+
+        /*
+        // set the callbacks for when the mouse or a touch moves
+        motorbike.mousemove = motorbike.touchmove = function(data)
+        {
+            this.alpha = 0.1;
+        };*/
+
+        // move the sprite to its designated position
+        motorbike.position.x = x;
+        motorbike.position.y = y;
+
+        stage.addChild(motorbike);
+    }
+
+    function createElement(element, x, y)
+    {
+        element.interactive = true;
+        element.buttonMode = true;
+
+        // center anchor point
+        element.anchor.x = 0.5;
+        element.anchor.y = 0.5;
+        // make it a bit bigger, so its easier to touch
+        element.scale.x = element.scale.y = 0.5;
+
+        // use the mousedown and touchstart
+        element.mousedown = element.touchstart = function(data)
+        {
+            this.data = data;
+            this.alpha = 0.9;
+            this.dragging = true;
+        };
+
+        // set the events for when the mouse is released or a touch is released
+        element.mouseup = element.mouseupoutside = element.touchend = element.touchendoutside = function(data)
+        {
+            this.alpha = 1;
+            this.dragging = false;
+            // set the interaction data to null
+            this.data = null;
+        };
+
+        /*
+        // TOTO
+         // set the callbacks for when the mouse or a touch moves
+         motorbike.mousemove = motorbike.touchmove = function(data)
+         {
+         this.alpha = 0.1;
+         };*/
+
+        // move the sprite to its designated position
+        element.position.x = x;
+        element.position.y = y;
+
+        stage.addChild(element);
+    }
 
     function createBunny(bunny,x, y)
     {
@@ -146,10 +232,6 @@
         // use the mousedown and touchstart
         arrow.mousedown = arrow.touchstart = function(data)
         {
-            //		data.originalEvent.preventDefault()
-            // store a refference to the data
-            // The reason for this is because of multitouch
-            // we want to track the movement of this particular touch
             this.data = data;
             this.alpha = 0.9;
             //this.dragging = true;
@@ -202,10 +284,10 @@
             this.data = null;
 
             // change element
-            if(bChangeHandle == false)
-                bChangeHandle = true;
+            if(bChangeGasbox == false)
+                bChangeGasbox = true;
             else
-                bChangeHandle = false;
+                bChangeGasbox = false;
             cleanAllChildren(whiteList);
             createAngle(getCurrentAngle());
         };
@@ -216,80 +298,13 @@
         stage.addChild(changeButton);
     }
 
-    function createAngle_0()
-    {
-        // create a texture from an image path
-        var handle_path = "";
-        if(bChangeHandle == false)
-            handle_path = "./pic/handlebar.png";
-        else
-            handle_path = "./pic/handlebar_2.png";
-        var texture2 = PIXI.Texture.fromImage(handle_path);
-        // create a new Sprite using the texture
-        var bunny2 = new PIXI.Sprite(texture2);
-        createBunny(bunny2, window.innerWidth * 0.6, window.innerHeight * 0.2);
-
-        // create a texture from an image path
-        var texture3 = PIXI.Texture.fromImage("./pic/chain.png");
-        // create a new Sprite using the texture
-        var bunny3 = new PIXI.Sprite(texture3);
-        createBunny(bunny3, window.innerWidth*0.38,window.innerHeight*0.55);
-    }
-
-    function createAngle_1()
-    {
-        // create a texture from an image path
-        var handle_path = "";
-        if(bChangeHandle == false)
-            handle_path = "./pic/handlebar.png";
-        else
-            handle_path = "./pic/handlebar_2.png";
-        var texture2 = PIXI.Texture.fromImage(handle_path);
-        // create a new Sprite using the texture
-        var bunny2 = new PIXI.Sprite(texture2);
-        createBunny(bunny2, window.innerWidth * 0.6, window.innerHeight * 0.2);
-
-        // create a texture from an image path
-        var texture4 = PIXI.Texture.fromImage("./pic/back_wheel.png");
-        // create a new Sprite using the texture
-        var bunny4 = new PIXI.Sprite(texture4);
-        createBunny(bunny4, window.innerWidth*0.18,window.innerHeight*0.5);
-
-        // create a texture from an image path
-        var texture5 = PIXI.Texture.fromImage("./pic/frame.png");
-        // create a new Sprite using the texture
-        var bunny5 = new PIXI.Sprite(texture5);
-        createBunny(bunny5, window.innerWidth*0.38,window.innerHeight*0.3);
-    }
-
-    function createAngle_2()
-    {
-
-        // create a texture from an image path
-        var handle_path = "";
-        if(bChangeHandle == false)
-            handle_path = "./pic/handlebar.png";
-        else
-            handle_path = "./pic/handlebar_2.png";
-        var texture2 = PIXI.Texture.fromImage(handle_path);
-        // create a new Sprite using the texture
-        var bunny2 = new PIXI.Sprite(texture2);
-        createBunny(bunny2, window.innerWidth * 0.6, window.innerHeight * 0.2);
-
-        // create a texture from an image path
-        var texture6 = PIXI.Texture.fromImage("./pic/seat.png");
-        // create a new Sprite using the texture
-        var bunny6 = new PIXI.Sprite(texture6);
-        createBunny(bunny6, window.innerWidth*0.2,window.innerHeight*0.2);
-    }
-
     function changeAngle_Left()
     {
         cleanAllChildren(whiteList);
         var angle = getCurrentAngle()-1;
-        if(angle <0)
+        if(angle <= 0)
         {
-            angle = nTotalAngles - 1;
+            angle = nTotalAngles;
         }
         setCurrentAngle(angle);
 
@@ -299,8 +314,8 @@
     function changeAngle_Right()
     {
         cleanAllChildren(whiteList);
-        var angle = getCurrentAngle()+1;
-        if(angle >= nTotalAngles)
+        var angle = getCurrentAngle() + 1;
+        if(angle > nTotalAngles)
         {
             angle = angle - nTotalAngles;
         }
@@ -311,17 +326,28 @@
 
     function createAngle(angle)
     {
-        switch(angle)
+        var motorPath = "./pic/MotorBike/";
+        var motorName = "";
+        var eleName = "";
+        if(angle < 10)
         {
-            case 0:
-                createAngle_0();
-                break;
-            case 1:
-                createAngle_1();
-                break;
-            case 2:
-                createAngle_2();
-                break;
+            motorName = "bbbb_000" + angle + ".png";
+            eleName = "aaa_000" + angle + ".png";
+        }
+        else if(angle >=10)
+        {
+            motorName = "bbbb_00" + angle + ".png";
+            eleName = "aaa_00" + angle + ".png";
+        }
+        var texturre_motor = PIXI.Texture.fromImage(motorPath + motorName);
+        var motor = new PIXI.Sprite(texturre_motor);
+        createMotorBike(motor,window.innerWidth * 0.3, window.innerHeight * 0.4);
+
+        if(bChangeGasbox == true)
+        {
+            var texturre_element = PIXI.Texture.fromImage(motorPath + eleName);
+            var element = new PIXI.Sprite(texturre_element);
+            createMotorBike(element, window.innerWidth * 0.3, window.innerHeight * 0.4);
         }
     }
 
@@ -331,7 +357,7 @@
     }
 
     function getCurrentAngle(){
-        if (currentAngle < 0 || currentAngle >= nTotalAngles)
+        if (currentAngle <= 0 || currentAngle > nTotalAngles)
         {
             throw new Error('Angle must be in correct scale');
         }
